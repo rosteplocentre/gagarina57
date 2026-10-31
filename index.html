@@ -67,6 +67,16 @@ header{min-height:76px}header .logo{font-weight:600}
 }
 @media(max-width:370px){.hero h1{font-size:39px}.mobile-menu summary{padding:8px 10px}.slide img{height:340px}}
 .hero{background-image:linear-gradient(90deg,#092126c7,#09212660),url('images/living-room.webp')}.intro{padding-top:65px!important;padding-bottom:65px!important;gap:40px}.intro .art{min-height:310px}.booking-shell{max-width:850px;margin:28px auto 0;padding:14px;background:#fff;border:1px solid #e4e7e2;border-radius:18px;box-shadow:0 12px 35px #123b4614}.booking-shell .booking-frame{margin-top:0}footer{line-height:1.8}footer a{text-underline-offset:4px}.photo-lightbox{position:fixed;inset:0;z-index:999;background:#0a171bef;display:grid;place-items:center;padding:55px 55px 70px}.photo-lightbox[hidden]{display:none}.photo-lightbox img{max-width:100%;max-height:calc(100vh - 130px);object-fit:contain}.photo-lightbox button{position:absolute;border:0;border-radius:50%;background:#ffffff35;color:#fff;width:44px;height:44px;font-size:28px;cursor:pointer}.lb-close{top:12px;right:15px}.lb-prev{left:8px}.lb-next{right:8px}.lb-caption{position:absolute;bottom:18px;color:#fff;text-align:center}.slide img{cursor:zoom-in}@media(max-width:700px){.hero{background-image:linear-gradient(180deg,#092126b8,#09212680),url('images/living-room.webp')}.intro{padding-top:50px!important;padding-bottom:50px!important}.booking-shell{padding:6px}.photo-lightbox{padding:60px 10px 70px}.photo-lightbox button{width:36px;height:36px}}
+/* Reduce excess whitespace between description and gallery */
+@media(min-width:701px){
+ main section#about{padding-top:55px!important;padding-bottom:25px!important}
+ main section#gallery{padding-top:30px!important}
+ .intro .art{min-height:290px}
+}
+@media(max-width:700px){
+ main section#about{padding-bottom:25px!important}
+ main section#gallery{padding-top:30px!important}
+}
 </style>
 </head>
 <body>
