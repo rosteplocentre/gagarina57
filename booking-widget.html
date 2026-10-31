@@ -1,1 +1,18 @@
-<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Бронирование</title><style>body{margin:0;background:#f8f4ec}#hr-widget{min-height:680px}</style></head><body><div id="hr-widget"></div><script type="module" src="https://homereserve.ru/widget.js"></script><script type="module">window.homereserve.initWidgetList({"token":"Xq1yLlGXgE"})</script></body></html>
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Бронирование</title><style>body{margin:0;background:#f8f4ec}#hr-widget{min-height:360px}</style></head><body><div id="hr-widget"></div><script type="module" src="https://homereserve.ru/widget.js"></script><script type="module">window.homereserve.initWidgetList({"token":"Xq1yLlGXgE"})</script><script>
+(function(){
+ let last=0;
+ function report(){
+  const content=document.getElementById('hr-widget');
+  const height=Math.ceil(Math.max(360,content.scrollHeight,content.getBoundingClientRect().height));
+  if(Math.abs(height-last)>3){last=height;parent.postMessage({type:'gagarina57:booking-height',height:height},location.origin);}
+ }
+ const observer=new ResizeObserver(report);
+ observer.observe(document.body);
+ observer.observe(document.getElementById('hr-widget'));
+ const changes=new MutationObserver(report);
+ changes.observe(document.getElementById('hr-widget'),{childList:true,subtree:true,attributes:true});
+ window.addEventListener('load',report);
+ setInterval(report,2500);
+ report();
+})();
+</script></body></html>
