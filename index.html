@@ -128,7 +128,7 @@ document.addEventListener('keydown',e=>{if(box.hidden)return;if(e.key==='Escape'
 (function(){
 const overlay=document.getElementById('booking-overlay'),open=document.getElementById('open-booking'),close=document.getElementById('close-booking'),frame=document.getElementById('mobile-booking-frame');
 let previous=null;
-function show(){previous=document.activeElement;frame.src='/booking-widget.html';overlay.hidden=false;document.body.style.overflow='hidden';close.focus();}
+function show(){previous=document.activeElement;frame.src='/booking-widget.html?fullscreen=1';overlay.hidden=false;document.body.style.overflow='hidden';close.focus();}
 function hide(){overlay.hidden=true;document.body.style.overflow='';frame.removeAttribute('src');if(previous&&previous.focus)previous.focus();}
 open.addEventListener('click',show);close.addEventListener('click',hide);
 document.addEventListener('keydown',function(e){if(!overlay.hidden&&e.key==='Escape')hide();});
