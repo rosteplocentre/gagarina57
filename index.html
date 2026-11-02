@@ -155,6 +155,35 @@ header .logo{display:inline-flex;align-items:center;gap:12px;white-space:nowrap}
 </main><button type="button" class="back-to-top" id="back-to-top" aria-label="Наверх" title="Наверх"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 14 6-6 6 6"/><path d="M12 8v11"/></svg></button><div class="booking-overlay" id="booking-overlay" role="dialog" aria-modal="true" aria-label="Бронирование апартаментов" hidden><div class="booking-overlay-bar"><span>Бронирование · Гагарина, 57</span><button type="button" class="booking-overlay-close" id="close-booking">✕ Закрыть</button></div><iframe id="mobile-booking-frame" title="Форма бронирования HomeReserve" loading="lazy"></iframe></div><div class="photo-lightbox" id="photo-lightbox" role="dialog" aria-modal="true" aria-label="Просмотр фото" hidden><button class="lb-close" aria-label="Закрыть">×</button><button class="lb-prev" aria-label="Назад">‹</button><img alt=""><button class="lb-next" aria-label="Вперёд">›</button><div class="lb-caption"></div></div>
 <footer class="site-footer"><div class="footer-inner"><div class="footer-top"><div class="footer-brand"><div class="footer-kicker">АПАРТАМЕНТЫ У БАЛТИЙСКОГО МОРЯ</div><div class="footer-title">Гагарина, 57</div><p>Уютное пространство для отдыха в Зеленоградске.</p><a class="footer-book" href="#booking">Выбрать даты <span aria-hidden="true">↗</span></a></div><div class="footer-place"><h3>Где мы находимся</h3><p>Калининградская область<br>Зеленоградск, улица Гагарина, 57</p><a href="#location">Об апартаментах и расположении ↗</a></div><div class="footer-docs"><h3>Информация для гостей</h3><a href="/legal.html">Сведения об исполнителе</a><a href="/privacy.html">Обработка персональных данных</a><a href="/terms.html">Условия бронирования</a></div></div><div class="footer-bottom"><span>© 2026 Гагарина, 57</span><span>ИП Старчиков Олег Геннадьевич</span></div></div></footer>
 <script>
+/* Shared keyboard and background isolation for modal dialogs. */
+window.gagarinaModal=(function(){
+ const background=[...document.querySelectorAll('header, main, footer, #back-to-top')];
+ let active=null,previousOverflow='',previousInert=[];
+ const focusable='button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"]),iframe';
+ function open(dialog){
+  if(active)return;
+  active=dialog;previousOverflow=document.body.style.overflow;
+  previousInert=background.map(el=>({el,inert:el.inert}));
+  background.forEach(el=>{el.inert=true;});
+  document.body.style.overflow='hidden';
+ }
+ function close(dialog){
+  if(active!==dialog)return;
+  previousInert.forEach(({el,inert})=>{el.inert=inert;});
+  previousInert=[];document.body.style.overflow=previousOverflow;active=null;
+ }
+ document.addEventListener('keydown',function(e){
+  if(!active||e.key!=='Tab'||e.defaultPrevented)return;
+  const elements=[...active.querySelectorAll(focusable)].filter(el=>el.getClientRects().length>0&&!el.closest('[hidden]'));
+  if(!elements.length){e.preventDefault();active.focus();return;}
+  const first=elements[0],last=elements[elements.length-1];
+  if(e.shiftKey&&(document.activeElement===first||!active.contains(document.activeElement))){e.preventDefault();last.focus();}
+  else if(!e.shiftKey&&(document.activeElement===last||!active.contains(document.activeElement))){e.preventDefault();first.focus();}
+ },true);
+ return {open,close};
+})();
+</script>
+<script>
 document.querySelectorAll('.mobile-menu-links a').forEach(function(link){link.addEventListener('click',function(){document.querySelector('.mobile-menu').open=false;});});
 window.addEventListener('message',function(event){
  if(event.origin!==window.location.origin||!event.data||event.data.type!=='gagarina57:booking-height')return;
@@ -181,8 +210,8 @@ window.addEventListener('message',function(event){
 (function(){
 const box=document.getElementById('photo-lightbox'),imgs=Array.from(document.querySelectorAll('.slide img')),large=box.querySelector('img'),cap=box.querySelector('.lb-caption');let index=0,prior=null;
 function show(i){index=(i+imgs.length)%imgs.length;large.src=imgs[index].src;large.alt=imgs[index].alt;cap.textContent=imgs[index].alt+' · '+(index+1)+' / '+imgs.length;}
-function close(){box.hidden=true;document.body.style.overflow='';large.removeAttribute('src');if(prior)prior.focus();}
-imgs.forEach((im,i)=>{im.tabIndex=0;im.setAttribute('role','button');im.addEventListener('click',()=>{prior=im;show(i);box.hidden=false;document.body.style.overflow='hidden';box.querySelector('.lb-close').focus();});im.addEventListener('keydown',e=>{if(e.key==='Enter')im.click();});});
+function close(){box.hidden=true;window.gagarinaModal.close(box);large.removeAttribute('src');if(prior)prior.focus();}
+imgs.forEach((im,i)=>{im.tabIndex=0;im.setAttribute('role','button');im.setAttribute('aria-label','Открыть фото: '+im.alt);im.addEventListener('click',()=>{prior=im;show(i);box.hidden=false;window.gagarinaModal.open(box);box.querySelector('.lb-close').focus();});im.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();im.click();}});});
 box.querySelector('.lb-close').addEventListener('click',close);box.querySelector('.lb-prev').addEventListener('click',()=>show(index-1));box.querySelector('.lb-next').addEventListener('click',()=>show(index+1));box.addEventListener('click',e=>{if(e.target===box)close();});
 document.addEventListener('keydown',e=>{if(box.hidden)return;if(e.key==='Escape')close();if(e.key==='ArrowLeft')show(index-1);if(e.key==='ArrowRight')show(index+1);});
 })();
@@ -190,8 +219,8 @@ document.addEventListener('keydown',e=>{if(box.hidden)return;if(e.key==='Escape'
 (function(){
 const overlay=document.getElementById('booking-overlay'),open=document.getElementById('open-booking'),close=document.getElementById('close-booking'),frame=document.getElementById('mobile-booking-frame');
 let previous=null;
-function show(){previous=document.activeElement;frame.src='/booking-widget.html?fullscreen=1';overlay.hidden=false;document.body.style.overflow='hidden';close.focus();}
-function hide(){overlay.hidden=true;document.body.style.overflow='';frame.removeAttribute('src');if(previous&&previous.focus)previous.focus();}
+function show(){previous=document.activeElement;frame.src='/booking-widget.html?fullscreen=1';overlay.hidden=false;window.gagarinaModal.open(overlay);close.focus();}
+function hide(){overlay.hidden=true;window.gagarinaModal.close(overlay);frame.removeAttribute('src');if(previous&&previous.focus)previous.focus();}
 open.addEventListener('click',show);close.addEventListener('click',hide);
 document.addEventListener('keydown',function(e){if(!overlay.hidden&&e.key==='Escape')hide();});
 })();
