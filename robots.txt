@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /booking-widget.html
+Sitemap: https://gagarina57.ru/sitemap.xml
